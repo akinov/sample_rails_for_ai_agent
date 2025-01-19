@@ -13,36 +13,40 @@ class PostsController < ApplicationController
 
   # GET /posts/new
   def new
-    @post = Post.new
+    @post_form = PostForm.new
   end
 
   # GET /posts/1/edit
-  def edit; end
+  def edit
+    @post_form = PostForm.new(post: @post)
+  end
 
   # POST /posts or /posts.json
   def create
-    @post = Post.new(post_params)
+    @post_form = PostForm.new(post_params)
 
     respond_to do |format|
-      if @post.save
-        format.html { redirect_to @post, notice: 'Post was successfully created.' }
-        format.json { render :show, status: :created, location: @post }
+      if @post_form.save
+        format.html { redirect_to @post_form.post, notice: 'Post was successfully created.' }
+        format.json { render :show, status: :created, location: @post_form.post }
       else
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @post.errors, status: :unprocessable_entity }
+        format.json { render json: @post_form.errors, status: :unprocessable_entity }
       end
     end
   end
 
   # PATCH/PUT /posts/1 or /posts/1.json
   def update
+    @post_form = PostForm.new(post_params.merge(post: @post))
+
     respond_to do |format|
-      if @post.update(post_params)
-        format.html { redirect_to @post, notice: 'Post was successfully updated.' }
-        format.json { render :show, status: :ok, location: @post }
+      if @post_form.save
+        format.html { redirect_to @post_form.post, notice: 'Post was successfully updated.' }
+        format.json { render :show, status: :ok, location: @post_form.post }
       else
         format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @post.errors, status: :unprocessable_entity }
+        format.json { render json: @post_form.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -66,6 +70,6 @@ class PostsController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def post_params
-    params.require(:post).permit(:title, :content)
+    params.require(:post_form).permit(:title, :content)
   end
 end
